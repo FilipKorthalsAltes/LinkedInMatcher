@@ -86,35 +86,35 @@ def match_linkedin_bullhorn(file1, file2, fuzzy_threshold_company=60, fuzzy_thre
         ['Naam_2', 'bedrijf_2', 'functie_1', 'functie_2']
     ].rename(columns={
         'Naam_2': 'Naam',
-        'bedrijf_2': 'Company',
-        'functie_1': 'Old Role',
-        'functie_2': 'New Role'
+        'bedrijf_2': 'Bedrijf',
+        'functie_1': 'Oude rol',
+        'functie_2': 'Nieuwe rol'
     })
 
     same_role_new_company = merged_df[~merged_df['bedrijf_match'] & merged_df['functie_match']][
         ['Naam_2', 'bedrijf_1', 'bedrijf_2', 'functie_2']
     ].rename(columns={
         'Naam_2': 'Naam',
-        'bedrijf_1': 'Old Company',
-        'bedrijf_2': 'New Company',
-        'functie_2': 'Role'
+        'bedrijf_1': 'Oud bedrijf',
+        'bedrijf_2': 'Nieuw bedrijf',
+        'functie_2': 'Rol'
     })
 
     different_both = merged_df[~merged_df['bedrijf_match'] & ~merged_df['functie_match']][
         ['Naam_2', 'bedrijf_1', 'bedrijf_2', 'functie_1', 'functie_2']
     ].rename(columns={
         'Naam_2': 'Naam',
-        'bedrijf_1': 'Old Company',
-        'bedrijf_2': 'New Company',
-        'functie_1': 'Old Role',
-        'functie_2': 'New Role'
+        'bedrijf_1': 'Oud bedrijf',
+        'bedrijf_2': 'Nieuw bedrijf',
+        'functie_1': 'Oude functie',
+        'functie_2': 'Nieuwe functie'
     })
 
     # Write to Excel
     output = BytesIO()
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        same_company_new_role.to_excel(writer, sheet_name='New Role, Same Company', index=False)
-        same_role_new_company.to_excel(writer, sheet_name='Same Role, New Company', index=False)
-        different_both.to_excel(writer, sheet_name='Different Role & Company', index=False)
+        same_company_new_role.to_excel(writer, sheet_name='Nieuwe rol, Zelfde bedrijf', index=False)
+        same_role_new_company.to_excel(writer, sheet_name='Zelfde rol, Nieuw bedrijf', index=False)
+        different_both.to_excel(writer, sheet_name='Niuewe rol & bedrijf', index=False)
     output.seek(0)
     return output
