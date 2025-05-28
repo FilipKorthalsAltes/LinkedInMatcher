@@ -1,28 +1,5 @@
 # app.py
 
-import subprocess
-import sys
-
-# -- Auto-install required packages if missing --
-def install_if_missing(package):
-    try:
-        __import__(package)
-    except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-# List of required base modules
-required_modules = [
-    "streamlit",
-    "pandas",
-    "chardet",
-    "xlsxwriter",
-    "thefuzz"
-]
-
-for module in required_modules:
-    import_name = "thefuzz" if module == "thefuzz" else module
-    install_if_missing(import_name)
-
 # -- Safe to import everything now --
 import streamlit as st
 from logica import match_linkedin_bullhorn
@@ -32,21 +9,22 @@ st.set_page_config(page_title="LinkedIn vs Bullhorn Matcher", layout="centered")
 st.title("🔍 LinkedIn vs Bullhorn Rol/Bedrijf Change Checker")
 
 st.markdown("""
-Upload two CSV files: one exported from **LinkedIn**, and one from **Bullhorn**.  
-Then click the button to run the role and company change analysis.
+Upload twee CSV files: ééntje geëxporteerd van **LinkedIn**, en de andere uit **Bullhorn**. Zorg ervoor dat je bij het exporteren van Bullhorn de kolommen aantikt uit "CSV_Export". Die komen overeen met Naam, Huidige functietitel, en Bedrijf.  
+Na het uploaden van de bestanden, kun je de fuzzy matching gevoeligheid aanpassen voor zowel bedrijfsnamen als functietitels tussen 0 en 100. Rond de 60 is aangeraden voor bedrijf, voor functietitel kan je wat strenger zijn, hier kan je mee spelen.
+Belangrijk om te vermelden: dit is een fuzzy matching tool, dus het is mogelijk dat er fouten in de matching zitten. Controleer goed de resultaten voor je deze gebruikt, vooral bij mensen met namen die veel voorkomen (sophie bakker bijv.)
 """)
 
 # Uploads
-file1 = st.file_uploader("📄 Upload first CSV", type="csv")
-file2 = st.file_uploader("📄 Upload second CSV", type="csv")
+file1 = st.file_uploader("📄 Upload Bullhorn CSV", type="csv")
+file2 = st.file_uploader("📄 Upload LinkedIn CSV", type="csv")
 
 # Sliders for fuzzy threshold
-fuzzy_company = st.slider("🏢 Company match sensitivity", 0, 100, 60)
-fuzzy_role = st.slider("🧑‍💼 Role match sensitivity", 0, 100, 60)
+fuzzy_company = st.slider("Sensitiviteit bedrijf", 0, 100, 60)
+fuzzy_role = st.slider("Sensitiviteit functietitel", 0, 100, 60)
 
 # Only show button if both files are uploaded
 if file1 and file2:
-    if st.button("▶️ Run Analysis"):
+    if st.button("▶️ Run Analyse"):
         try:
             output = match_linkedin_bullhorn(file1, file2, fuzzy_company, fuzzy_role)
             st.success("✅ Matching completed successfully!")
